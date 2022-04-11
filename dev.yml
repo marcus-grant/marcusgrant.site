@@ -2,7 +2,16 @@
 # An Ansible playbook to deploy a development environment. For now with fake data from https://bit.ly/3rj3nFL 
 # Requires docker being installed and running on the local system
 - hosts: localhost
+  vars:
+    wp_db_version: '10.4'
+    wp_db_image_name: "mariadb:{{ wp_db_version }}"
+    wp_app_base_version: '7.4'
+    wp_app_base_tag: "php{{ wp_app_base_version }}-apache"
+    wp_app_base_image_name: "wordpress:{{ wp_app_base_tag }}"
   tasks:
+    - name: Set user group based on which OS this container is being developed on
+      set_fact:
+        dev_user_group: "{{ (ansible_os_family == 'Darwin') | ternary('staff', 'marcus') }}"
     - name: Ensure a build directory tree structure exists @ project root (Default OS)
       file:
         path: "{{ item }}"
@@ -31,9 +40,31 @@
         - ./build/docker/wp
       when: ansible_os_family == 'Darwin'
 
-    - name: Start the Wordpress Database (MariaDB) container
+    - name: Create the Docker network wp-testnet for all Wordpress related containers
       docker_network:
         name: wp-testnet
+
+    - name: Start the MariaDB database container before Wordpress container
+      docker_container:
+        name: wp-db
+        image: "{{ wp_db_image_name}}"
+        pull: true
+        volumes:
+          - ./build/docker/db:/var/lib/mysql:rw
+        # networks_cli_compatible: true
+        networks:
+          - name: wp-testnet
+            aliases: [db]
+        env:
+          MYSQL_ROOT_PASSWORD: pass
+
+    - name: Create the Wordpress custom Dockerfile in ./build
+      template:
+        src: Dockerfile.j2
+        dest: ./build/docker/Dockerfile
+        owner: "{{ ansible_user_id }}"
+        group: "{{ dev_user_group }}"
+        mode: '0755'
 
     # - name: Run  
     # - name: Template a docker file
