@@ -1,0 +1,39 @@
+---
+# An Ansible playbook to deploy a development environment. For now with fake data from https://bit.ly/3rj3nFL 
+# Requires docker being installed and running on the local system
+- hosts: localhost
+  tasks:
+    - name: Ensure a build directory tree structure exists @ project root (Default OS)
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0755'
+      loop:
+        - ./build
+        - ./build/docker
+        - ./build/docker/db
+        - ./build/docker/wp
+      when: ansible_os_family != 'Darwin'
+
+    - name: Ensure a build directory tree structure exists @ project root (MacOS)
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: staff
+        mode: '0755'
+      loop:
+        - ./build
+        - ./build/docker
+        - ./build/docker/db
+        - ./build/docker/wp
+      when: ansible_os_family == 'Darwin'
+
+    - name: Start the Wordpress Database (MariaDB) container
+      docker_network:
+        name: wp-testnet
+
+    # - name: Run  
+    # - name: Template a docker file
