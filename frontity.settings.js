@@ -13,26 +13,11 @@ const settings = {
       "state": {
         "theme": {
           "menu": [
-            [
-              "Home",
-              "/"
-            ],
-            [
-              "Nature",
-              "/category/nature/"
-            ],
-            [
-              "Travel",
-              "/category/travel/"
-            ],
-            [
-              "Japan",
-              "/tag/japan/"
-            ],
-            [
-              "About Us",
-              "/about-us/"
-            ]
+            ["Home","/"],
+            ["Block", "/category/block/"],
+            ["Classic", "/category/classic/"],
+            ["Alignments", "/tag/alignment-2/"],
+            ["About", "/about/"]
           ],
           "featured": {
             "showOnList": false,
@@ -44,8 +29,10 @@ const settings = {
     {
       "name": "@frontity/wp-source",
       "state": {
+        // Modify this URL to match the base domain of the WORDPRESS server
+        // NOT the frontity server
         "source": {
-          "url": "https://test.frontity.org"
+          "api": "http://marcusgrantsite.local/wp-json"
         }
       }
     },

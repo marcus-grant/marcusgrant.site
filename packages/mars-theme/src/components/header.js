@@ -35,11 +35,12 @@ const Container = styled.div`
 const Title = styled.h2`
   margin: 0;
   margin-bottom: 16px;
+  color: #b8bb26;
 `;
 
 const Description = styled.h4`
   margin: 0;
-  color: rgba(255, 255, 255, 0.7);
+  color: #d3869b;
 `;
 
 const StyledLink = styled(Link)`
