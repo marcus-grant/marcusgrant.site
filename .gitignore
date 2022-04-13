@@ -64,3 +64,6 @@ jspm_packages/
 # Frontity
 build
 analyze
+
+# Local docker
+#/Dockerfile
