@@ -1,7 +1,5 @@
 ---
-tref:
-  - https://bit.ly/3uFZETB
-  - https://bit.ly/3K6Ms0A
+bitref: [3uFZETB,3K6Ms0A,3vfmW2U]
 ---
 # Creating a JAMStack Site with React + Wordpress = Frontity
 
