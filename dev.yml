@@ -5,9 +5,10 @@
   vars:
     wp_db_version: '10.4'
     wp_db_image_name: "mariadb:{{ wp_db_version }}"
-    wp_app_base_version: '7.4'
-    wp_app_base_tag: "php{{ wp_app_base_version }}-apache"
-    wp_app_base_image_name: "wordpress:{{ wp_app_base_tag }}"
+    # wp_app_base_version: '7.4'
+    # wp_app_base_tag: "php{{ wp_app_base_version }}-apache"
+    # wp_app_base_image_name: "wordpress:{{ wp_app_base_tag }}"
+    wp_app_image_name: wordpress:php8.1-apache
   tasks:
     - name: Set user group based on which OS this container is being developed on
       set_fact:
@@ -42,7 +43,7 @@
 
     - name: Create the Docker network wp-testnet for all Wordpress related containers
       docker_network:
-        name: wp-testnet
+        name: wp-net
 
     - name: Start the MariaDB database container before Wordpress container
       docker_container:
@@ -53,18 +54,40 @@
           - ./build/docker/db:/var/lib/mysql:rw
         # networks_cli_compatible: true
         networks:
-          - name: wp-testnet
-            aliases: [db]
+          - name: wp-net
+            # aliases: [db]
         env:
           MYSQL_ROOT_PASSWORD: pass
 
-    - name: Create the Wordpress custom Dockerfile in ./build
-      template:
-        src: Dockerfile.j2
-        dest: ./build/docker/Dockerfile
-        owner: "{{ ansible_user_id }}"
-        group: "{{ dev_user_group }}"
-        mode: '0755'
+    # - name: Create the Wordpress custom Dockerfile in ./build
+    #   template:
+    #     src: Dockerfile.j2
+    #     dest: ./Dockerfile
+    #     owner: "{{ ansible_user_id }}"
+    #     group: "{{ dev_user_group }}"
+    #     mode: '0755'
+    #
+    # - name: Build the WordPress container using the templated Dockerfile
+    #   docker_image:
+    #     name: wpdev:0.1
+    #     build:
+    #       path: ./
+    #     source: build
 
-    # - name: Run  
-    # - name: Template a docker file
+    - name: Run the WordPress container
+      docker_container:
+        name: wp-app
+        image: "{{ wp_app_image_name }}"
+        pull: true
+        volumes:
+          - ./wordpress:/var/www/html
+        networks:
+          - name: wp-net
+            # aliases: [wp-app,wp]
+        ports:
+          - 8088:80
+        env:
+          WORDPRESS_DB_PASSWORD: pass
+          WORDPRESS_DB_USER: admin
+          WORDPRESS_DB_HOST: wp-db
+
