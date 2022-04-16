@@ -4,7 +4,7 @@ networks:
   wp-net:
 
 services:
-  db:
+  wp-db:
     image: mariadb:10.4
     volumes:
       - ./build/docker/db:/var/lib/mysql
@@ -19,19 +19,47 @@ services:
 
   wp-app:
     depends_on:
-      - db
+      - wp-db
+    # NOTE: Choose between building the custom Dockerfile or run WP's image
     image: wordpress:php8.1-apache
+    # build: .
     volumes:
       - ./build/docker/wp:/var/www/html
-      - ./packages:/var/www/html/wp-content/themes
+      - ./packages/mars-theme:/var/www/html/wp-content/themes/mars-theme
+      # - ./wordpress/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      # - ./wordpress/plugins:/var/www/html/wp-content/plugins
     ports:
       - "8088:80"
     networks:
       - wp-net
     restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: wp-db
       WORDPRESS_DB_USER: admin
       WORDPRESS_DB_PASSWORD: pass
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
 
+  # TODO Work in Progress I'm having a ton of problems making WPCLI work here
+  # wp-cli:
+  #   depends_on:
+  #     - wp-db
+  #     - wp-app
+  #   image: wordpress:cli-php8.1
+  #   # This is required because for some reason this is the corresponding userid
+  #   # in the wordpress container
+  #   user: "33:33"
+  #   networks:
+  #     - wp-net
+  #   volumes:
+  #     - ./build/docker/wp:/var/www/html
+  #     - ./packages/mars-theme:/var/www/html/wp-content/themes/mars-theme
+  #     - ./wordpress/scripts/wp-setup.sh:/bin/wp-setup.sh
+  #     - ./wordpress/content/themeunittestdata.wordpress.xml:/etc/themeunittestdata.wordpress.xml
+  #     # - ./wordpress/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+  #     # - ./wordpress/plugins:/var/www/html/wp-content/plugins
+  #   environment:
+  #     HOME: /tmp
+  #   # command: ["/bin/wait-for-mysql.sh", "/wp-setup.sh"]
+  #   # command: ["/bin/wp-setup.sh"]
+       
