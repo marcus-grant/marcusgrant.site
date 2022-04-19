@@ -67,3 +67,5 @@ analyze
 
 # Local docker
 #/Dockerfile
+docker/wp/*
+docker/db/*

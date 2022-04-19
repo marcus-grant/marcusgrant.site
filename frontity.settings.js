@@ -36,7 +36,8 @@ const settings = {
         // NOT the frontity server
         "source": {
           // "api": "http://marcusgrantsite.local/wp-json"
-          "api": "http://127.0.0.1:8088/wp-json"
+          // "api": "http://127.0.0.1:8088/wp-json"
+          "api": "https://marcusgrant.site/wp-json"
         }
       }
     },
