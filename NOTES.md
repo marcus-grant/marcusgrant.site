@@ -232,3 +232,45 @@ This will copy over the theme and plugins to wordpress into the container. Note 
 
 To run the container a database container is also necessary and there we can just use the official `mysql:5.7` container.
 
+## Create a Custom Theme
+
+Now that the standard mars theme works, it might be good to start developing our own. I'll be naming it `retrobox` because I use a lot of gruvbox color schemes and retro computing aesthetics.
+
+Take the Pre-rendered `frontity.settings.js` below:
+
+```js
+// from ./frontity.settings.js
+{
+  name: "@frontity/mars-theme",
+  state: {
+    theme: {
+      menu: [
+        ["Home", "/"],
+        ["Nature", "/category/nature/"],
+        ["Travel", "/category/travel/"],
+        ["Japan", "/tag/japan/"],
+        ["About Us", "/about-us/"]
+      ],
+      featured: {
+        showOnList: false,
+        showOnPost: false
+      }
+    }
+  }
+},
+// ...
+```
+
+Then replace it with this simple segment since it's a fresh theme.
+
+```js
+{
+  name: "retrobox-theme" // Or replace with your theme name
+},
+```
+
+Then re-run frontity with this command:
+
+```sh
+npx frontity dev
+```

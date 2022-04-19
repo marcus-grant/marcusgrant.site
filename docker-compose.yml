@@ -26,6 +26,7 @@ services:
     volumes:
       - ./build/docker/wp:/var/www/html
       - ./packages/mars-theme:/var/www/html/wp-content/themes/mars-theme
+      - ./packages/retrobox-theme:/var/www/html/wp-content/themes/retrobox-theme
       # - ./wordpress/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       # - ./wordpress/plugins:/var/www/html/wp-content/plugins
     ports:
